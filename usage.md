@@ -1,4 +1,4 @@
-PROJET MANAGEMENT 1 SECURITY
+PROJET MANAGEMENT & SECURITY
 - **Navigate the file system**
 
 - **Manage files and directories**
