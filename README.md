@@ -15,6 +15,7 @@ Interface web conversationnelle IA — LLM + TTS + STT + Vision, 100% local et o
  - **RGPD** — IP pseudonymisée, logs rotatifs, politique de confidentialité intégrée
  - **Modules** — architecture extensible (terminal, SSO, billing...)
  - **100% local** — aucune donnée envoyée à des services externes
+ - **RGPD READY & IA IACT**
 
 
 --FR--
