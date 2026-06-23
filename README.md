@@ -1,4 +1,4 @@
-# Agenia AGENT PRO - datacorners.com
+# Agenia AGENT PRO ENTREPRISE - datacorners.com
 Waitlist
 Test it here : https://agent.datacorners.com
 Agent to the CONDIENTIAL sandbox (internet, coding, bash capacity).
