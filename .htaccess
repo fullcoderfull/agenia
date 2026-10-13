@@ -1,0 +1,29 @@
+# =============================================================================
+# Agenia — configuration Apache (ignorée par IIS)
+# Nécessite « AllowOverride All » (ou au minimum FileInfo, Indexes, AuthConfig, Limit)
+# sur le dossier du site. Voir DEPLOY.md.
+# =============================================================================
+
+Options -Indexes
+DirectoryIndex index.php index.html
+
+# Dossiers lus uniquement par PHP sur le disque : jamais servis par le web.
+RedirectMatch 404 ^/(business|config|data|logs|lib|react|docs|deploy)(/|$)
+
+# Sauvegardes, journaux, scripts, binaires, documentation et secrets.
+# Apache sert en texte brut toute extension qu'il ne connaît pas (ex. api.php.avant-demo) :
+# ces fichiers exposeraient le code source PHP s'ils n'étaient pas interdits ici.
+<FilesMatch "\.(avant|ancien)-|\.(bak|old|orig|save|log|jsonl|sql|sh|bat|ps1|md|conf|dll|pdb)$|^appsettings.*\.json$|^\.env|^\.git|~$">
+  Require all denied
+</FilesMatch>
+
+# Pages de test et de diagnostic.
+<FilesMatch "^(test|debug-test|whoami|mock-openrouter|setup-generate|phpinfo)\.php$">
+  Require all denied
+</FilesMatch>
+
+# En-têtes de sécurité pour les fichiers statiques (les pages PHP posent les leurs dans check.php).
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
