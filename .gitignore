@@ -46,3 +46,19 @@ docs/
 
 # Videos
 *.mp4
+
+# Copies de sauvegarde
+*.bak
+*.bak_*
+*_bak*
+*-bak*
+*bck*
+*.old
+*_old.*
+*.orig
+*.save*
+*~
+*backup*
+* - Copie*
+* - Copy*
+*.avant-*
