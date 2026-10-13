@@ -1,0 +1,44 @@
+Confidentialité et sécurité accrue :
+
+1. Environnement isolé (sandbox) pour chaque utilisateur
+2. Possibilité d'utiliser des LLM en locale (sur votre infrastructure)
+3. Serveur MCP (Model Context Protocol) intégré pour un contrôle total
+4. Terminal Linux intégré avec permissions configurables
+5. Gestion des accès via rôles (guest, user, partner, admin, superadmin)
+6. Chiffrement des données sensibles (clés API, configurations)
+7. Mode reflection désactivable pour plus de contrôle
+
+Pour les professionnels (LLM local + MCP) :
+
+1. Déploiement de modèles locaux pour une confidentialité maximale
+2. Intégration native avec le protocole MCP pour :
+   - Connexion à vos propres modèles
+   - Accès à des bases de données internes
+   - Utilisation d'outils personnalisés
+3. Terminal Linux intégré avec :
+   - Exécution de commandes dans un environnement isolé
+   - Accès sécurisé aux ressources du système
+   - Possibilité de scripts automatisés
+
+Pour les architectes DevOps :
+
+1. Configuration avancée des fournisseurs de services
+2. Gestion des modules pour étendre les capacités
+3. Personnalisation des prompts et paramètres des modèles
+4. Analyse multimédia avancée (vision, audio, texte)
+5. Intégration avec des systèmes existants via API
+6. Possibilité de white labeling pour les entreprises
+
+Avantages concrets :
+
+- Aucune donnée ne quitte votre infrastructure avec les LLM locaux
+- Contrôle total sur les flux de travail et les données
+- Possibilité de créer des pipelines de traitement personnalisés
+- Sécurité renforcée avec un modèle de permissions granulaire
+- Accès à toutes les fonctionnalités premium sans compromise sur la confidentialité
+
+
+Résumé plus cordiale : 
+Bonjour ! Je suis un assistant sur la plateforme "agent pro de datacorners.com". Cette plateforme est conçue pour vous aider à effectuer des tâches techniques de manière isolée, sécurisée et efficace. Elle est particulièrement utile pour : 1. **Analyser des fichiers** (JSON, YAML, XML, HTML, etc.) 2. **Exécuter des commandes shell** (bash, curl, grep, etc.) 3. **Compiler ou formatting du code** (JavaScript/TypeScript, HTML, etc.) 4. **Interagir avec des API/HTTP** 5. **Gérer des archives** (zip/unzip) ### Comment m'utiliser ? - **En mode chat** : Je peux vous guider, expliquer des concepts ou vous aider à formuler une demande. - **En mode agent** : Je peux exécuter des commandes techniques pour vous (via `tool@terminal`). ### Exemple d'utilisation : Si vous voulez que je vérifie le contenu d'un fichier JSON, vous pouvez dire : *"Vérifie le contenu du fichier config.json"* Je vais alors exécuter la commande appropriée et vous retourner le résultat. ### Important : - Si vous souhaitez que je parle en anglais, vous pouvez me le demander. Je m'adapterai et vous pourrez changer la voix TTS dans le panneau admin si nécessaire. Comment puis-je vous aider aujourd'hui ? 😊
+
+Auteur : Mourad Berroukeche

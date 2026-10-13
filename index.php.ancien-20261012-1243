@@ -1,0 +1,600 @@
+﻿<?php
+// =============================================================================
+// index.php — Interface principale
+// ============================================================================= 
+
+header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__ . '/check.php';
+
+
+$_lang        = defined('UI_LANG') ? UI_LANG : 'fr';
+$_isFr        = $_lang === 'fr';
+$_isAdmin     = $GLOBALS['isAdmin']      ?? false;
+$_isSuperAdmin= $GLOBALS['isSuperAdmin'] ?? false;
+$_isDemo      = $GLOBALS['isDemo']       ?? false;
+$_isGuest     = $GLOBALS['isGuest']      ?? false;
+$_isPartner   = $GLOBALS['isPartner']    ?? false;
+$_role        = $GLOBALS['authRole']     ?? 'guest';
+$_user        = $GLOBALS['authUser']     ?? '';
+
+
+
+
+// Plan utilisateur pour bouton PRO
+$_userPlan   = '';
+$_showProBtn = false;
+if (!$_isAdmin && !$_isSuperAdmin) {
+    try { 
+        $_row = db_row(
+            'SELECT plan FROM waitlist_subscribers WHERE id = ? OR email = ? LIMIT 1',
+            [$_user, $_user]
+        );
+        $_userPlan = $_row['plan'] ?? '';
+    } catch (Exception $_e) {}
+    $_showProBtn = !in_array($_userPlan, ['pro', 'enterprise', 'white_label']);
+}
+
+?>
+<!DOCTYPE html>
+<html lang="<?= $_lang ?>" data-role="<?= htmlspecialchars($_role) ?>">
+<head>
+<meta charset="UTF-8">
+<meta name="description" content="Datacorners : Sandbox VPS IA avec RAG pour analyse multimédia (vidéo/audio/image) et développement. Environnement isolé pour traiter, analyser et enrichir vos contenus avec intelligence artificielle. Solution SaaS pour transcription, reconnaissance d'images, analyse vocale et recherche sémantique.">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGENT PRO</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/business.css">
+<script>
+(function(){
+  var t = localStorage.getItem('vox-theme');
+  if (t) { document.documentElement.setAttribute('data-theme', t); }
+})();
+var voxLang = '<?= $_lang ?>';
+</script>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header>
+  <div class="logo">AGENT<span>PRO</span></div>
+
+  <!-- Status bar : chaque item devient une "image" nommée, SVG masqué à l'AT -->
+  <div class="status-bar" role="group" aria-label="<?= $_isFr ? 'États des services' : 'Service status' ?>">
+    <div class="status-item has-tooltip" role="img" aria-label="<?= $_isFr ? 'Microphone' : 'Microphone' ?>">
+      <div class="status-dot" id="dot-mic"></div>
+      <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+      </svg>
+      <span class="tooltip"><?= $_isFr ? 'Microphone' : 'Microphone' ?></span>
+    </div>
+    <div class="status-item has-tooltip" role="img" aria-label="<?= $_isFr ? 'Caméra' : 'Camera' ?>">
+      <div class="status-dot" id="dot-cam"></div>
+      <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+        <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+      </svg>
+      <span class="tooltip"><?= $_isFr ? 'Caméra' : 'Camera' ?></span>
+    </div>
+    <div class="status-item has-tooltip" role="img" aria-label="<?= $_isFr ? 'Modèle IA' : 'AI model' ?>">
+      <div class="status-dot" id="dot-llm"></div>
+      <span style="font-family:var(--mono);font-size:10px;" aria-hidden="true">AI</span>
+      <span class="tooltip"><?= $_isFr ? 'Modèle IA' : 'AI model' ?></span>
+    </div>
+    <div class="status-item has-tooltip" role="img" aria-label="<?= $_isFr ? 'Voix' : 'Voice' ?>">
+      <div class="status-dot" id="dot-tts"></div>
+      <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+      </svg>
+      <span class="tooltip"><?= $_isFr ? 'Voix' : 'Voice' ?></span>
+    </div>
+    <?php if ($_isSuperAdmin): ?>
+    <div class="status-item has-tooltip" role="img" aria-label="<?= $_isFr ? 'Base de données' : 'Database' ?>">
+      <div class="status-dot" id="dot-db"></div>
+      <span style="font-family:var(--mono);font-size:10px;" aria-hidden="true">DATA</span>
+      <span class="tooltip"><?= $_isFr ? 'Base de données' : 'Database' ?></span>
+    </div>
+    <?php endif; ?>
+  </div>
+
+  <!-- Thème -->
+  <button type="button" class="icon-btn has-tooltip" id="theme-btn" onclick="toggleTheme()" style="width:32px;height:32px;" aria-label="<?= $_isFr ? 'Changer de thème' : 'Change theme' ?>">
+    <svg viewBox="0 0 24 24" id="theme-icon" aria-hidden="true" focusable="false"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <span class="tooltip"><?= $_isFr ? 'Thème clair / sombre' : 'Light / dark theme' ?></span>
+  </button>
+
+  <!-- Langue (admin/superadmin) -->
+  <?php if ($_isAdmin || $_isSuperAdmin): ?>
+  <button type="button" class="icon-btn" id="lang-btn"
+    onclick="setLang(i18nLang==='fr'?'en':'fr')"
+    aria-label="<?= $_isFr ? 'Changer de langue' : 'Change language' ?>"
+    style="font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.08em;min-width:28px;">
+    <?= strtoupper($_lang) ?>
+  </button>
+  <?php endif; ?>
+
+  <!-- Admin / Réglages -->
+  <?php if ($_isAdmin || $_isSuperAdmin || $_user): ?>
+  <button type="button" class="admin-toggle has-tooltip" id="admin-btn" onclick="toggleAdmin()" aria-expanded="false" aria-controls="admin-panel">
+    <span aria-hidden="true">⚙</span> <?= $_isFr ? 'ADMIN' : 'ADMIN' ?>
+    <span class="tooltip"><?= $_isFr ? 'Panneau d\'administration' : 'Admin panel' ?></span>
+  </button>
+  <?php elseif ($_isDemo || $_isGuest ): ?>
+  <button type="button" class="admin-toggle has-tooltip" id="admin-btn" onclick="toggleAdmin()" aria-expanded="false" aria-controls="admin-panel">
+    <span aria-hidden="true">⚙</span> <?= $_isFr ? 'RÉGLAGES' : 'SETTINGS' ?>
+    <span class="tooltip"><?= $_isFr ? 'Vos préférences' : 'Your preferences' ?></span>
+  </button>
+  <?php endif; ?>
+
+  <!-- Modules -->
+  <button type="button" class="modules-toggle has-tooltip" id="modules-btn" onclick="toggleModulesPanel()">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+      <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+      <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+    </svg>
+    <span data-i18n="modulesBtn">MODULES</span>
+    <span class="tooltip" data-i18n="modulesTooltip"><?= $_isFr ? 'Gérer les modules' : 'Manage modules' ?></span>
+  </button>
+
+  <!-- Déconnexion (lien icône : nom accessible obligatoire) -->
+  <a class="logout-btn has-tooltip" href="/logout.php" aria-label="<?= $_isFr ? 'Déconnexion' : 'Sign out' ?>">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    <span class="tooltip" data-i18n="logoutTooltip"><?= $_isFr ? 'Déconnexion' : 'Sign out' ?></span>
+  </a>
+
+  <!-- Super Admin -->
+  <?php if ($_isSuperAdmin): ?>
+  <a href="/superadmin-front.php" class="btn-sm" style="border-color:var(--accent)"><span aria-hidden="true">⚡</span> SUPER ADMIN</a>
+  <?php endif; ?>
+
+  <!-- PRO -->
+  <?php if ($_showProBtn): ?>
+  <a class="btn-pro has-tooltip" href="/checkout.php?plan=pro_monthly" id="pro-btn">
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    <span data-i18n="proBtn">PRO</span>
+    <span class="tooltip" data-i18n="proBtnTooltip"><?= $_isFr ? 'Passer au plan Pro' : 'Upgrade to Pro' ?></span>
+  </a>
+  <?php endif; ?>
+</header>
+
+<!-- ==================== LAYOUT ==================== -->
+<div class="layout">
+
+  <!-- ===== ADMIN PANEL ===== -->
+  <div id="admin-panel">
+    <h2 class="admin-header">
+      <?= ($_isAdmin || $_isSuperAdmin) ? '// ADMINISTRATION' : '// RÉGLAGES' ?>
+      <span id="vox-version" style="font-size:10px;opacity:0.5;float:right;"></span>
+    </h2>
+
+    <button type="button" class="icon-btn has-tooltip" onclick="toggleTheme()" style="width:32px;height:32px;margin:12px 20px 0;" aria-label="<?= $_isFr ? 'Changer de thème' : 'Change theme' ?>">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <span class="tooltip"><?= $_isFr ? 'Thème' : 'Theme' ?></span>
+    </button>
+
+    <?php include __DIR__ . '/modules-panel.php'; ?>
+
+    <!-- ── LLM (admin/superadmin uniquement) ─────────────────────────────── -->
+    <?php if ($_isAdmin || $_isSuperAdmin || $_user): ?>
+    <div class="admin-section">
+      <h3 class="admin-section-title">▸ <?= $_isFr ? 'Intelligence artificielle' : 'AI' ?></h3>
+      <div class="form-group">
+        <label for="cfg-provider-llm"><?= $_isFr ? 'Source' : 'Source' ?></label>
+        <select id="cfg-provider-llm" onchange="saveConfig(); loadProviderModels(0);" aria-label="<?= $_isFr ? 'Source du modèle IA' : 'AI model source' ?>"></select>
+        <select id="cfg-llmList-model" onchange="document.getElementById('cfg-llm-model').value = this.value;saveConfig();" aria-label="<?= $_isFr ? 'Modèle IA' : 'AI model' ?>"></select>
+        <input type="text" id="cfg-llm-model" aria-label="<?= $_isFr ? 'Nom du modèle' : 'Model name' ?>">
+        <input type="text" id="cfg-llm-url" placeholder="<?= $_isFr ? 'URL du modèle' : 'Model URL' ?>" value="" aria-label="<?= $_isFr ? 'URL du modèle' : 'Model URL' ?>">
+      </div>
+      <!-- Champs techniques cachés — maintenus pour providers.js -->
+      <div style="display:none" aria-hidden="true">
+        <input type="text" id="cfg-llm-url" tabindex="-1">
+        <input type="text" id="cfg-vision-model" tabindex="-1">
+        <textarea id="cfg-system-prompt" tabindex="-1"></textarea>
+      </div>
+      <div class="form-group" id="cfg-llm-key-wrap" style="display:none">
+        <label for="cfg-llm-key"><?= $_isFr ? 'Clé d\'accès' : 'Access key' ?></label>
+        <input type="password" id="cfg-llm-key" placeholder="••••••••">
+      </div>
+    </div>
+
+    <!-- ── STT (admin/superadmin uniquement) ─────────────────────────────── -->
+    <div class="admin-section">
+      <h3 class="admin-section-title">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;" aria-hidden="true" focusable="false">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+        </svg>
+        <?= $_isFr ? 'Transcription' : 'Transcription' ?>
+      </h3>
+      <div class="form-group">
+        <label for="cfg-provider-stt"><?= $_isFr ? 'Source' : 'Source' ?></label>
+        <select id="cfg-provider-stt" onchange="saveConfig()" aria-label="<?= $_isFr ? 'Source de transcription' : 'Transcription source' ?>"></select>
+      </div>
+      <div style="display:none" aria-hidden="true">
+        <input type="text" id="cfg-stt-url" tabindex="-1">
+        <input type="text" id="cfg-stt-model" tabindex="-1">
+      </div>
+      <div class="form-group" id="cfg-stt-key-wrap" style="display:none">
+        <label for="cfg-stt-bearer"><?= $_isFr ? 'Clé d\'accès' : 'Access key' ?></label>
+        <input type="password" id="cfg-stt-bearer" placeholder="••••••••">
+      </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- ── Voix (tous les rôles connectés) ───────────────────────────────── -->
+    <div class="admin-section">
+      <h3 class="admin-section-title">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;" aria-hidden="true" focusable="false">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        <?= $_isFr ? 'Voix' : 'Voice' ?>
+      </h3>
+
+      <div class="form-group">
+        <label for="cfg-tts-voice-ui"><?= $_isFr ? 'Personnage' : 'Character' ?></label>
+        <select id="cfg-tts-voice-ui" onchange="onVoiceUiChange()">
+          <option value="fr">Célia — <?= $_isFr ? 'Français' : 'French' ?></option>
+          <option value="en">Alex — <?= $_isFr ? 'Anglais' : 'English' ?></option>
+        </select>
+      </div>
+
+      <div style="display:none" aria-hidden="true">
+        <select id="cfg-provider-tts" tabindex="-1"></select>
+        <input type="text" id="cfg-tts-url" tabindex="-1">
+        <input type="text" id="cfg-tts-model" tabindex="-1">
+        <input type="text" id="cfg-tts-voice" tabindex="-1">
+        <div id="cfg-tts-key-wrap"><input type="password" id="cfg-tts-key" tabindex="-1"></div>
+      </div>
+
+      <div class="form-group">
+        <label for="cfg-tts-format"><?= $_isFr ? 'Format audio' : 'Audio format' ?></label>
+        <select id="cfg-tts-format" onchange="saveConfig()">
+          <option value="wav">WAV</option>
+          <option value="mp3">MP3</option>
+          <option value="opus">OPUS</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="cfg-tts-min-words-strong"><?= $_isFr ? 'Mots min ponctuation forte' : 'Min words strong punct.' ?></label>
+        <input type="number" id="cfg-tts-min-words-strong" placeholder="20" min="1" max="100" onchange="saveConfig()">
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label" id="lbl-replay-audio"><?= $_isFr ? 'Relecture audio' : 'Audio replay' ?></span>
+        <label class="toggle">
+          <input type="checkbox" id="cfg-replay-audio" onchange="saveConfig()" aria-labelledby="lbl-replay-audio">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- ── Options ───────────────────────────────────────────────────────── -->
+    <div class="admin-section">
+      <h3 class="admin-section-title">▸ <?= $_isFr ? 'Options' : 'Options' ?></h3>
+      <div class="toggle-row">
+        <span class="toggle-label" id="lbl-audio-enabled"><?= $_isFr ? 'Voix activée' : 'Voice enabled' ?></span>
+        <label class="toggle">
+          <input type="checkbox" id="cfg-audio-enabled" onchange="saveConfig()" aria-labelledby="lbl-audio-enabled">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label" id="lbl-streaming">Streaming</span>
+        <label class="toggle">
+          <input type="checkbox" id="cfg-streaming" onchange="saveConfig()" aria-labelledby="lbl-streaming">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <?php if ($_isAdmin || $_isSuperAdmin): ?>
+      <div class="toggle-row">
+        <span class="toggle-label" id="lbl-no-think"><?= $_isFr ? 'Mode réflexion désactivé' : 'Thinking mode off' ?></span>
+        <label class="toggle">
+          <input type="checkbox" id="cfg-no-think" onchange="saveConfig()" aria-labelledby="lbl-no-think">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <?php endif; ?>
+      <?php /* Conversation naturelle cachée — loopback acoustique non résolu */ ?>
+      <input type="hidden" id="cfg-natural-conv" value="false">
+    </div>
+
+    <!-- ── Vision (admin/superadmin uniquement) ──────────────────────────── -->
+    <?php if ($_isAdmin || $_isSuperAdmin): ?>
+    <div class="admin-section">
+      <h3 class="admin-section-title">▸ <?= $_isFr ? 'Vision webcam' : 'Webcam vision' ?></h3>
+      <div class="form-group">
+        <label for="cfg-vision-mode"><?= $_isFr ? 'Mode' : 'Mode' ?></label>
+        <select id="cfg-vision-mode" onchange="onVisionModeChange()">
+          <option value="off"><?= $_isFr ? '🚫 Désactivé' : '🚫 Disabled' ?></option>
+          <option value="auto"><?= $_isFr ? '👁 Auto' : '👁 Auto' ?></option>
+          <option value="manual"><?= $_isFr ? '📸 Manuel' : '📸 Manual' ?></option>
+        </select>
+      </div>
+      <div id="vision-auto-section" style="display:none">
+        <div class="cfg-note">
+          <?= $_isFr
+            ? 'Image jointe uniquement quand <strong>vous envoyez un message</strong>.'
+            : 'Image attached only when <strong>you send a message</strong>.' ?>
+        </div>
+        <div class="form-group">
+          <label for="cfg-vision-threshold"><?= $_isFr ? 'Seuil' : 'Threshold' ?> : <span id="cfg-threshold-val">15</span>%</label>
+          <input type="range" id="cfg-vision-threshold" min="1" max="50" value="15"
+            oninput="g('cfg-threshold-val').textContent=this.value" onchange="saveConfig()">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="cfg-vision-prompt"><?= $_isFr ? 'Prompt vision' : 'Vision prompt' ?></label>
+        <textarea class="cfg" id="cfg-vision-prompt"></textarea>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label" id="lbl-vision-speak"><?= $_isFr ? 'Lire la description' : 'Read description' ?></span>
+        <label class="toggle">
+          <input type="checkbox" id="cfg-vision-speak" onchange="saveConfig()" aria-labelledby="lbl-vision-speak">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- ── Actions ───────────────────────────────────────────────────────── -->
+    <div class="admin-section">
+      <button type="button" class="btn btn-secondary" onclick="testConnections()"><span aria-hidden="true">⟳</span> <?= $_isFr ? 'Tester' : 'Test' ?></button>
+      <button type="button" class="btn btn-primary" onclick="saveConfig()"><span aria-hidden="true">✓</span> <?= $_isFr ? 'Sauvegarder' : 'Save' ?></button>
+      <button type="button" class="btn btn-secondary" onclick="resetConfig()"><span aria-hidden="true">↺</span> <?= $_isFr ? 'Réinitialiser' : 'Reset' ?></button>
+      <?php if ($_isAdmin || $_isSuperAdmin): ?>
+      <button type="button" class="btn btn-secondary" onclick="clearHistory()"><span aria-hidden="true">✕</span> <?= $_isFr ? 'Effacer l\'historique' : 'Clear history' ?></button>
+      <?php endif; ?>
+      <div class="test-result" id="test-result" role="status" aria-live="polite"></div>
+      <button type="button" class="btn btn-secondary" onclick="testTtsDirect()" style="margin-top:8px">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;" aria-hidden="true" focusable="false">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        <?= $_isFr ? 'Test voix' : 'Test voice' ?>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== CHAT ===== -->
+  <div class="chat-area">
+    <div id="messages" role="log" aria-live="polite" aria-label="<?= $_isFr ? 'Conversation' : 'Conversation' ?>">
+      <div class="empty-state" id="empty-state">
+        <div class="icon" aria-hidden="true">◈</div>
+        <div><?= $_isFr ? 'INTERFACE PRÊTE' : 'READY' ?></div>
+        <div class="empty-sub"><?= $_isFr ? 'Commencez à écrire…' : 'Start typing…' ?></div>
+      </div>
+    </div>
+
+    <div class="input-bar">
+      <input type="file" id="file-input" accept="image/*,.pdf,.txt,.md,.docx" style="display:none">
+      <!-- role/tabindex CONSERVÉS volontairement : sans eux, un label n'est pas focusable au clavier -->
+      <label for="file-input" id="upload-btn" class="icon-btn has-tooltip"
+        data-i18n="uploadTitle" data-i18n-attr="title" role="button" tabindex="0"
+        aria-label="<?= $_isFr ? 'Joindre un fichier' : 'Attach file' ?>">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        <span class="tooltip">📎 <?= $_isFr ? 'Joindre fichier' : 'Attach file' ?></span>
+      </label>
+      <div id="upload-badge" class="upload-badge"></div>
+
+      <button type="button" class="icon-btn has-tooltip" id="mic-btn" onclick="toggleMic()"
+        data-i18n="micTitle" data-i18n-attr="title" aria-pressed="false"
+        aria-label="<?= $_isFr ? 'Micro / Parler' : 'Mic / Speak' ?>">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        <span class="tooltip">🎤 <?= $_isFr ? 'Micro / Parler' : 'Mic / Speak' ?></span>
+      </button>
+
+      <button type="button" class="icon-btn has-tooltip" id="cam-capture-btn" onclick="manualCapture()"
+        aria-label="<?= $_isFr ? 'Capturer une image' : 'Capture image' ?>">
+        <svg viewBox="0 0 24 24" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="3.5"/><path d="M20 7h-2.5l-1.5-2h-8L6.5 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+        <span class="tooltip">📷 <?= $_isFr ? 'Capturer' : 'Capture' ?></span>
+      </button>
+
+      <div class="audio-playing" id="audio-playing" role="status" aria-live="polite">
+        <div class="audio-bars" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <span><?= $_isFr ? 'LECTURE' : 'PLAYING' ?></span>
+      </div>
+
+      <button type="button" class="icon-btn pause has-tooltip" id="pause-btn" onclick="ttsPauseToggle()" style="display:none"
+        aria-label="<?= $_isFr ? 'Pause / Reprendre' : 'Pause / Resume' ?>">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        <span class="tooltip">⏸ <?= $_isFr ? 'Pause / Reprendre' : 'Pause / Resume' ?></span>
+      </button>
+
+      <div id="replay-btn" style="display:none;align-items:center;gap:4px;">
+        <button type="button" class="icon-btn" onclick="replayPlay()" aria-label="<?= $_isFr ? 'Réécouter' : 'Replay' ?>">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>
+        </button>
+        <button type="button" class="icon-btn" onclick="replayNext()" aria-label="<?= $_isFr ? 'Suivant' : 'Next' ?>">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="5 3 15 12 5 21 5 3" fill="currentColor"/><line x1="19" y1="4" x2="19" y2="20" stroke="currentColor" stroke-width="2"/></svg>
+        </button>
+        <span id="replay-label" style="font-family:var(--mono);font-size:9px;color:var(--text-muted)"></span>
+      </div>
+
+      <textarea id="user-input"
+        placeholder="<?= $_isFr ? 'Écrivez votre message…' : 'Type your message…' ?>"
+        aria-label="<?= $_isFr ? 'Votre message' : 'Your message' ?>"
+        rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+
+      <button type="button" class="icon-btn send" id="send-btn" onclick="sendMessage()"
+        aria-label="<?= $_isFr ? 'Envoyer' : 'Send' ?>">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== VISION OVERLAY ==================== -->
+<div id="vision-overlay" aria-hidden="true">
+  <div id="vision-info">VISION</div>
+  <div id="delta-wrap">
+    <div class="delta-row">
+      <span>Δ <?= $_isFr ? 'changement' : 'change' ?></span>
+      <span id="delta-val">0%</span>
+    </div>
+    <div class="delta-bg"><div class="delta-fill" id="delta-fill"></div></div>
+  </div>
+  <button type="button" class="vision-stop" onclick="stopVision()"><span aria-hidden="true">◼</span> <?= $_isFr ? 'ARRÊTER' : 'STOP' ?></button>
+  <button type="button" class="vision-stop" onclick="toggleCamera()" id="cam-flip-btn"
+    data-i18n="camFlip" data-i18n-attr="title"
+    aria-label="<?= $_isFr ? 'Changer de caméra' : 'Switch camera' ?>"
+    style="border-color:rgba(6,182,212,0.4);color:var(--accent2);">
+    <span aria-hidden="true">⇄</span> <?= $_isFr ? 'CAMÉRA' : 'CAMERA' ?>
+  </button>
+  <div id="cam-preview-wrap">
+    <video id="cam-preview" autoplay muted playsinline></video>
+    <div id="cam-flash"></div>
+    <div class="vision-strip">
+      <div class="vision-badge">
+        <div class="live-dot" aria-hidden="true"></div>
+        <span><?= $_isFr ? 'EN DIRECT' : 'LIVE' ?></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<canvas id="diff-canvas" width="80" height="60" style="display:none" aria-hidden="true"></canvas>
+<!-- ==================== VARIABLES JS ==================== -->
+<script>
+window.VOX_DEBUG    = <?= (defined('DEBUG_LOG') && DEBUG_LOG) ? 'true' : 'false'; ?>;
+var voxRole         = '<?= htmlspecialchars($_role) ?>';
+var voxUser         = '<?= htmlspecialchars($_user) ?>';
+var voxIsAdmin      = <?= $_isAdmin      ? 'true' : 'false'; ?>;
+var voxIsSuperAdmin = <?= $_isSuperAdmin ? 'true' : 'false'; ?>;
+var voxIsDemo       = <?= $_isDemo       ? 'true' : 'false'; ?>;
+var voxIsPartner    = <?= $_isPartner    ? 'true' : 'false'; ?>;
+var voxIsGuest      = <?= $_isGuest      ? 'true' : 'false'; ?>;
+var voxAgentEnabled = <?= (($_mp_userHasTerminal ?? false) && !$_isDemo && !$_isGuest) ? 'true' : 'false'; ?>;
+var voxGuestExpires     = <?= $GLOBALS['guestData']['expires_at']    ?? 0; ?>;
+var voxGuestMessages    = <?= $GLOBALS['guestData']['messages_used'] ?? 0; ?>;
+var voxGuestMaxMessages = <?= $GLOBALS['guestData']['max_messages']  ?? 10; ?>;
+var voxGuestMaxPhotos   = <?= $GLOBALS['guestData']['max_photos']    ?? 2; ?>;
+var voxVisionOk = <?php
+  if ($_isAdmin || $_isSuperAdmin) { echo 'true'; }
+  elseif ($_isPartner && !empty($GLOBALS['partnerData']['vision'])) { echo 'true'; }
+  else { echo 'false'; }
+?>;
+</script>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>if(typeof pdfjsLib!=='undefined'){pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/providers.js"></script>
+<script src="js/api.js"></script>
+<script src="js/tts.js"></script>
+<script src="js/main.js"></script>
+<script src="js/config.js"></script>
+<script src="js/chat.js"></script>
+
+<script src="js/modules.js"></script>
+<script src="js/vision.js"></script>
+<script src="js/upload.js"></script>
+<script src="js/ui.js"></script>
+
+
+
+<script>
+// =============================================================================
+// index.php — Fonctions inline
+// =============================================================================
+
+function toggleTheme() {
+  var html = document.documentElement;
+  var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('vox-theme', next);
+  var icon = document.getElementById('theme-icon');
+  if (icon) {
+    icon.innerHTML = next === 'light'
+      ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+      : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  }
+}
+
+function onVoiceUiChange() {
+  var sel = g('cfg-tts-voice-ui');
+  if (!sel) { return; }
+  // Stocker uniquement la langue publique (fr|en)
+  // La voix technique est résolue par proxy-tts.php depuis settings.json
+  if (typeof config !== 'undefined') { config.ttsVoiceId = sel.value; }
+  saveConfig();
+}
+
+function toggleInstructField() {
+  var cb   = g('cfg-tts-instruct');
+  var wrap = g('instruct-prompt-wrap');
+  if (wrap) { wrap.style.display = (cb && cb.checked) ? 'block' : 'none'; }
+  saveConfig();
+}
+
+function testTtsDirect() {
+  ttsUnlock();
+  resetTtsBuffer();
+  var testText = '<?= $_isFr
+    ? 'Bonjour, ceci est un test de la voix. Elle devrait fonctionner correctement.'
+    : 'Hello, this is a voice test. It should work correctly.' ?>';
+  testText.split(' ').forEach(function(word) { feedTtsToken(word + ' '); });
+  flushTtsBuffer();
+}
+
+function filterOptions() {
+       const searchValue = document.getElementById('cfg-llm-model').value.toLowerCase();
+       const selectElement = document.getElementById('cfg-llmList-model');
+       if (!selectElement) {
+           console.log("Le select n'existe pas !");
+           return;
+       }
+       const options = selectElement.options;
+       for (let i = 0; i < options.length; i++) {
+           const optionText = options[i].text.toLowerCase();
+           options[i].style.display = optionText.includes(searchValue) ? '' : 'none';
+       }
+   }
+
+document.addEventListener('DOMContentLoaded', function() {
+   filterOptions();
+  // Version
+  var el = document.getElementById('vox-version');
+  if (el && typeof VOXMIND_VERSION !== 'undefined') { el.textContent = VOXMIND_VERSION; }
+
+  // Restaurer le select voix depuis config
+  var voiceSel = g('cfg-tts-voice-ui');
+  if (voiceSel && typeof config !== 'undefined' && config.ttsVoiceId) {
+    voiceSel.value = config.ttsVoiceId;
+  }
+
+  // i18n
+  if (typeof initI18n === 'function') { initI18n(); }
+
+   document.getElementById('cfg-llm-model').addEventListener('input', function() {
+    const searchValue = this.value.toLowerCase();
+    const select = document.getElementById('cfg-llmList-model');
+    let firstMatch = null;
+
+    // Filtrage des options
+    for (let opt of select.options) {
+        const isVisible = opt.text.includes(searchValue);
+        opt.style.display = isVisible ? '' : 'none';
+        if (isVisible && !firstMatch) {
+            firstMatch = opt;
+        }
+    }
+
+    // Sélection de la première option visible
+    if (firstMatch) {
+        select.value = firstMatch.value;
+        console.log("Première option visible sélectionnée :", firstMatch.text);
+    } else {
+        console.log("Aucune option ne correspond à la recherche.");
+    }
+});
+
+});
+</script>
+</body>
+</html>

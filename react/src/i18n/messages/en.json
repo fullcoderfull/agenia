@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "title": "Agenia — AI at work, under your control",
+    "description": "Agenia puts AI agents to work for your teams: the agent prepares, a person decides. Your data can stay on your own servers."
+  },
+  "nav": {
+    "skip": "Skip to content",
+    "control": "Guarantees",
+    "team": "Your teams",
+    "trial": "Trial",
+    "login": "Sign in",
+    "language": "Language",
+    "themeToLight": "Switch to light theme",
+    "themeToDark": "Switch to dark theme"
+  },
+  "hero": {
+    "title": "AgenIA under control",
+    "leadStrong": "The agent prepares, your team decides.",
+    "lead": "Agenia puts AI to work in your company, without anyone losing control.",
+    "ctaPrimary": "Try it for 20 minutes",
+    "ctaSecondary": "Watch the demo",
+    "reassure": "No sign-up, no credit card · full access · 10 messages.",
+    "ctaDemo": "Guided demo"
+  },
+  "trail": {
+    "title": "Audit trail",
+    "tag": "Example",
+    "asker": "Karim, IT team:",
+    "question": "“Check the server and tell me what's wrong.”",
+    "rights": {
+      "title": "Permissions checked",
+      "detail": "Karim is allowed to make this request",
+      "meta": "2 ms"
+    },
+    "model": {
+      "title": "Local model",
+      "detail": "The request never leaves your servers",
+      "meta": "3.4 s"
+    },
+    "consent": {
+      "titlePending": "Approval requested from Karim",
+      "titleDone": "Approval given by Karim",
+      "detail": "Read the server status",
+      "allow": "Allow",
+      "deny": "Deny",
+      "by": "Decision made by Karim, not by the agent",
+      "metaPending": "waiting",
+      "metaDone": "approved"
+    },
+    "log": {
+      "title": "Recorded",
+      "detail": "Retrievable at any time",
+      "meta": ""
+    },
+    "footDuration": "total time",
+    "footDurationValue": "3.4 s",
+    "footCost": "cloud cost",
+    "footCostValue": "€0.00",
+    "footHuman": "human decision",
+    "footHumanValue": "1"
+  },
+  "capabilities": {
+    "title": "What the agent does for you",
+    "items": [
+      {
+        "id": "voice",
+        "title": "Talk to it, it answers.",
+        "text": "Dictate your request into the microphone. The answer appears on screen and is read aloud, in your language."
+      },
+      {
+        "id": "eye",
+        "title": "It reads what you show it.",
+        "text": "Attach an image, a Word document or a text file: it analyses them with you."
+      },
+      {
+        "id": "server",
+        "title": "On your servers, or in the cloud.",
+        "text": "You choose where the AI works: on your own servers, or with the cloud provider of your choice."
+      },
+      {
+        "id": "user",
+        "title": "For the whole team.",
+        "text": "Roles, quotas and instructions for each person: everyone gets what they need, nothing more."
+      }
+    ]
+  },
+  "demo": {
+    "title": "See the agent at work",
+    "text": "From question to answer, without leaving your screen.",
+    "fallback": "Open the video"
+  },
+  "promises": {
+    "title": "AI at work, without losing control.",
+    "items": [
+      {
+        "id": "consent",
+        "title": "Nothing is changed without your approval.",
+        "text": "The agent reads and analyses freely. Before changing anything, it shows what will change and waits for your approval."
+      },
+      {
+        "id": "stop",
+        "title": "An off switch, always.",
+        "text": "An administrator can switch an agent off at any time."
+      },
+      {
+        "id": "data",
+        "title": "Your data stays with you.",
+        "text": "Agenia can run entirely on your own servers. The cloud only if you choose it."
+      },
+      {
+        "id": "trace",
+        "title": "Everything can be traced.",
+        "text": "Every action leaves a record. You know what was done, and when."
+      }
+    ]
+  },
+  "team": {
+    "statement": "An AI agent doesn't replace your team. It works for it.",
+    "points": [
+      "The agent suggests, the person decides. Nothing is changed on their behalf without their approval.",
+      "Everyone keeps their role and their way of working. The tool fits the team you already have, not the other way round."
+    ],
+    "audience": "For leaders who want to stay in control, and for the teams who do the work: consulting, development, support."
+  },
+  "trial": {
+    "title": "Try it with your team",
+    "text": "20 minutes of full access and 10 messages, no sign-up, no credit card.",
+    "primary": "Try it for 20 minutes",
+    "secondary": "Create an account",
+    "login": "Already have an account? Sign in",
+    "demo": "Launch the demo"
+  },
+  "footer": {
+    "tagline": "Agenia, local and cloud AI interface",
+    "license": "Open source (AGPL) or commercial licence",
+    "privacy": "Privacy (GDPR)"
+  }
+}

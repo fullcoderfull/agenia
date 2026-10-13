@@ -1,0 +1,3 @@
+Ceci est le contenu que vous voulez écrire dans le fichier.
+Vous pouvez écrire plusieurs lignes ici.
+Le marqueur EOF indique la fin du contenu.

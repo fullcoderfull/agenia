@@ -1,0 +1,169 @@
+/* =============================================================================
+   modules-panel.css — Volet droit modules
+   ============================================================================= */
+
+/* ── Volet droit ─────────────────────────────────────────────────────────────── */
+#modules-panel {
+  width: 320px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  flex-shrink: 0;
+  transform: translateX(100%);
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  z-index: 20;
+  transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+#modules-panel.open {
+  transform: translateX(0);
+  position: relative;
+}
+
+/* ── Header volet ────────────────────────────────────────────────────────────── */
+.modules-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent2);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ── Sections ────────────────────────────────────────────────────────────────── */
+.modules-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.modules-section-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* ── Ligne module ────────────────────────────────────────────────────────────── */
+.module-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.module-row:last-child { border-bottom: none; }
+
+.module-info { flex: 1; }
+.module-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Badges plan ─────────────────────────────────────────────────────────────── */
+.module-plan {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+}
+.module-plan.guest      { background: rgba(16,185,129,0.15);  color: var(--green); }
+.module-plan.free       { background: rgba(6,182,212,0.15);   color: var(--accent2); }
+.module-plan.pro        { background: rgba(124,58,237,0.15);  color: var(--accent); }
+.module-plan.enterprise { background: rgba(245,158,11,0.15);  color: var(--yellow); }
+
+/* ── Switch toggle moderne ───────────────────────────────────────────────────── */
+.switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch-track {
+  position: absolute;
+  inset: 0;
+  background: var(--border);
+  border-radius: 24px;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+.switch-thumb {
+  position: absolute;
+  width: 18px; height: 18px;
+  top: 3px; left: 3px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  transition: all 0.25s;
+  pointer-events: none;
+}
+.switch input:checked ~ .switch-track  { background: var(--accent); }
+.switch input:checked ~ .switch-thumb  { transform: translateX(20px); background: #fff; }
+.switch input:disabled ~ .switch-track { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Bouton modules header ───────────────────────────────────────────────────── */
+.modules-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: all var(--t);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+.modules-toggle:hover  { border-color: var(--accent2); color: var(--accent2); }
+.modules-toggle.active { border-color: var(--accent2); color: var(--accent2); background: rgba(6,182,212,0.1); }
+.modules-toggle svg    { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── Bouton déconnexion ──────────────────────────────────────────────────────── */
+.logout-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: all var(--t);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.logout-btn:hover { border-color: var(--red); color: var(--red); }
+.logout-btn:hover svg { stroke: var(--red); }
+.logout-btn svg { width: 14px; height: 14px; flex-shrink: 0; stroke: var(--text-muted); transition: stroke var(--t); }
+
+/* ── Mobile ──────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  #modules-panel {
+    width: 100%;
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    z-index: 50;
+  }
+  #modules-panel.open {
+    transform: translateX(0);
+    position: fixed;
+  }
+  .modules-toggle span,
+  .logout-btn span { display: none; }
+}

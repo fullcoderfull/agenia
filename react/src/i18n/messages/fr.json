@@ -1,0 +1,138 @@
+{
+  "meta": {
+    "title": "Agenia — l'IA au travail, sous votre contrôle",
+    "description": "Agenia met des agents IA au service de vos équipes : l'agent prépare, une personne décide. Vos données peuvent rester sur vos serveurs."
+  },
+  "nav": {
+    "skip": "Aller au contenu",
+    "control": "Garanties",
+    "team": "Vos équipes",
+    "trial": "Essai",
+    "login": "Connexion",
+    "language": "Langue",
+    "themeToLight": "Passer en thème clair",
+    "themeToDark": "Passer en thème sombre"
+  },
+  "hero": {
+    "title": "AgenIA sous contrôle",
+    "leadStrong": "L'agent prépare, votre équipe décide.",
+    "lead": "Agenia met l'IA au travail dans votre entreprise, sans que personne ne perde la main.",
+    "ctaPrimary": "Essayer 20 minutes",
+    "ctaSecondary": "Voir la démo",
+    "reassure": "Sans inscription ni carte bancaire · accès complet · 10 messages.",
+    "ctaDemo": "Démonstration guidée"
+  },
+  "trail": {
+    "title": "Piste d'audit",
+    "tag": "Exemple",
+    "asker": "Karim, équipe IT :",
+    "question": "« Vérifie l'état du serveur et dis-moi ce qui cloche. »",
+    "rights": {
+      "title": "Droits vérifiés",
+      "detail": "Karim peut lancer cette demande",
+      "meta": "2 ms"
+    },
+    "model": {
+      "title": "Modèle local",
+      "detail": "La requête ne quitte pas vos serveurs",
+      "meta": "3,4 s"
+    },
+    "consent": {
+      "titlePending": "Accord demandé à Karim",
+      "titleDone": "Accord donné par Karim",
+      "detail": "Lire l'état du serveur",
+      "allow": "Autoriser",
+      "deny": "Refuser",
+      "by": "Décision prise par Karim, pas par l'agent",
+      "metaPending": "en attente",
+      "metaDone": "autorisé"
+    },
+    "log": {
+      "title": "Tracé",
+      "detail": "Retrouvable à tout moment",
+      "meta": ""
+    },
+    "footDuration": "durée totale",
+    "footDurationValue": "3,4 s",
+    "footCost": "coût cloud",
+    "footCostValue": "0,00 €",
+    "footHuman": "décision humaine",
+    "footHumanValue": "1"
+  },
+  "capabilities": {
+    "title": "Ce que l'agent fait pour vous",
+    "items": [
+      {
+        "id": "voice",
+        "title": "Parlez-lui, il vous répond.",
+        "text": "Dictez votre demande au micro. La réponse s'affiche et se lit à voix haute, dans votre langue."
+      },
+      {
+        "id": "eye",
+        "title": "Il lit ce que vous lui montrez.",
+        "text": "Joignez une image, un document Word ou un texte : il les analyse avec vous."
+      },
+      {
+        "id": "server",
+        "title": "Chez vous, ou dans le cloud.",
+        "text": "Vous choisissez où l'IA travaille : sur vos serveurs, ou chez le fournisseur cloud de votre choix."
+      },
+      {
+        "id": "user",
+        "title": "Pour toute l'équipe.",
+        "text": "Rôles, quotas et consignes propres à chacun : chaque personne dispose de ce dont elle a besoin, pas plus."
+      }
+    ]
+  },
+  "demo": {
+    "title": "Voyez l'agent au travail",
+    "text": "De la question à la réponse, sans quitter votre écran.",
+    "fallback": "Ouvrir la vidéo"
+  },
+  "promises": {
+    "title": "L'IA au travail, sans perdre la main.",
+    "items": [
+      {
+        "id": "consent",
+        "title": "Rien n'est modifié sans votre accord.",
+        "text": "L'agent lit et analyse librement. Avant de modifier quoi que ce soit, il montre ce qui va changer et attend votre accord."
+      },
+      {
+        "id": "stop",
+        "title": "Un interrupteur, toujours.",
+        "text": "Un administrateur peut couper un agent à tout moment."
+      },
+      {
+        "id": "data",
+        "title": "Vos données restent chez vous.",
+        "text": "Agenia peut fonctionner entièrement sur vos serveurs. Le cloud, seulement si vous le choisissez."
+      },
+      {
+        "id": "trace",
+        "title": "Tout est retrouvable.",
+        "text": "Chaque action laisse une trace. Vous savez ce qui a été fait, et quand."
+      }
+    ]
+  },
+  "team": {
+    "statement": "Un agent IA ne remplace pas votre équipe. Il travaille pour elle.",
+    "points": [
+      "L'agent propose, la personne décide. Rien n'est modifié en son nom sans son accord.",
+      "Chacun garde son rôle et sa façon de travailler. L'outil s'adapte à l'équipe en place, pas l'inverse."
+    ],
+    "audience": "Pour les dirigeants qui veulent garder la main, et pour les équipes qui font le travail : conseil, développement, support."
+  },
+  "trial": {
+    "title": "Essayez avec votre équipe",
+    "text": "20 minutes d'accès complet et 10 messages, sans inscription ni carte bancaire.",
+    "primary": "Essayer 20 minutes",
+    "secondary": "Créer un compte",
+    "login": "Déjà un compte ? Se connecter",
+    "demo": "Lancer la démonstration"
+  },
+  "footer": {
+    "tagline": "Agenia, interface IA locale et cloud",
+    "license": "Open source (AGPL) ou licence commerciale",
+    "privacy": "Confidentialité (RGPD)"
+  }
+}

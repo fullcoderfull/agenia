@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+
+# Autoriser tous les moteurs de recherche
+User-agent: Googlebot
+User-agent: Bingbot
+User-agent: DuckDuckBot
+User-agent: Brave
+User-agent: Yahoo
+User-agent: Yandex
+User-agent: Baiduspider
+Disallow:
+
+# Bloquer les scrapers agressifs
+User-agent: *
+Crawl-delay: 5

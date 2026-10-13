@@ -1,0 +1,48 @@
+# =============================================================================
+# Agenia — fichiers à ne JAMAIS versionner (secrets, données, builds)
+# Un secret poussé une fois reste dans l'historique Git, même supprimé ensuite.
+# =============================================================================
+
+# --- Secrets (les modèles *.example.php, eux, sont versionnés) ---
+config/secrets.php
+config/users.php
+config/partners.php
+.env
+.env.*
+
+# --- Données et journaux ---
+data/
+logs/
+*.log
+*.jsonl
+
+# --- Sauvegardes créées par les patchs, lots livrés ---
+*.avant-*
+agenia-*.zip
+agenia-*/
+
+# --- Front : dépendances et builds (app/ est régénéré par npm run deploy) ---
+react/node_modules/
+react/out/
+react/.next/
+react/next-env.d.ts
+app/
+
+# --- Système ---
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+business/
+
+# Videos (trop lourdes pour Git)
+*.mp4
+
+# Fonctionnalites PRO et documentation interne (hors depot)
+superadmin-journal.php
+superadmin-front.php
+api/superadmin/
+docs/
+
+# Videos
+*.mp4
