@@ -1,0 +1,12 @@
+
+# type(scope): short imperative summary  (max 72 characters)
+#
+# Types : feat | fix | security | perf | refactor | docs | test | build | chore | revert
+# Scopes: api | auth | agent | audit | plan | demo | llm | voice | front | i18n | config | iis | repo
+#
+# Body (optional): why the change is needed and what it affects.
+#
+# Refs: #<issue>
+# BREAKING CHANGE: <description>   (only for incompatible changes)
+#
+# See CONTRIBUTING.md. Lines starting with '#' are ignored.
