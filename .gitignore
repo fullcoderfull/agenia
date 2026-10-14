@@ -1,25 +1,63 @@
 # =============================================================================
-# Agenia — fichiers à ne JAMAIS versionner (secrets, données, builds)
+# Agenia — fichiers exclus du dépôt
 # Un secret poussé une fois reste dans l'historique Git, même supprimé ensuite.
+# Vérifier une règle : git check-ignore -v <fichier>
 # =============================================================================
 
-# --- Secrets (les modèles *.example.php, eux, sont versionnés) ---
-config/secrets.php
+# --- Secrets et comptes (seuls les modèles *.example.php sont versionnés) ---
+config/secrets*.php
+!config/secrets.example.php
 config/users.php
 config/partners.php
 .env
 .env.*
+appsettings*.json
+*.pfx
+*.pem
+*.key
 
-# --- Données et journaux ---
+# --- API de paiement .NET (dépôt séparé et privé) ---
+business/
+
+# --- Données, journaux, audit ---
 data/
 logs/
 *.log
 *.jsonl
 
-# --- Sauvegardes créées par les patchs, lots livrés ---
+# --- Offre PRO et administration (non publiées) ---
+superadmin/
+superadmin-front.php
+superadmin-journal.php
+api/superadmin/
+api/superadmin-back.php
+js/superadmin.js
+css/superadmin.css
+
+# --- Pages de test et de débogage ---
+proxy-stripe-debug.php
+whoami.php
+test.php
+debug-test.php
+mock-openrouter.php
+setup-generate.php
+
+# --- Sauvegardes et fichiers de travail ---
 *.avant-*
+*.bak
+*.bak_*
+*.bak-*
+*-old.json
+*-bck.js
+inventaire-*.csv
+_quarantaine/
 agenia-*.zip
 agenia-*/
+
+# --- Documentation interne et médias lourds ---
+docs/
+github.md
+*.mp4
 
 # --- Front : dépendances et builds (app/ est régénéré par npm run deploy) ---
 react/node_modules/
@@ -28,36 +66,11 @@ react/.next/
 react/next-env.d.ts
 app/
 
-# --- Système ---
+# --- Système et éditeurs ---
 Thumbs.db
 Desktop.ini
 .DS_Store
-
-business/
-
-*.bak*
-*-old.*
-
-# Documentation interne, sauvegardes, tests et diagnostics
-CARTOGRAPHIE*.md
-*.ancien-*
-*.acl-*.txt
-agenia-*.ps1
-test.php
-debug-test.php
-mock-*.php
-whoami.php
-icacls-*.bat
-icals-*.bat
-monfichier.txt
-version*.txt
-*.mp4
-superadmin-journal.php
-superadmin-front.php
-api/superadmin/
-docs/
-*bck*
-github.md
-config/secrets*.php
-proxy-stripe-debug.php
-proxy-stripe-debug.php
+.vs/
+.vscode/
+.idea/
+.continue/
