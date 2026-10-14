@@ -74,3 +74,6 @@ Desktop.ini
 .vscode/
 .idea/
 .continue/
+
+# --- Configuration locale (prompt systeme, adresses internes) ---
+config/settings.json

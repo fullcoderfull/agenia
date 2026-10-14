@@ -219,6 +219,18 @@ $body = [
   "max_tokens" => 2048,
   "temperature" => 0.7
 ];
+// AGENIA-COST v1 : demander au fournisseur cloud le nombre reel de tokens (et le cout pour OpenRouter).
+// Liste par defaut ; surcharge possible par fournisseur dans settings.json : "streamUsage": true/false.
+$agUsageDefault = ['openai', 'openrouter', 'gemini', 'deepseek'];
+$agProvKey = strtolower($llmProvider);
+$agWantUsage = $agProvKey !== 'ollama'
+    && (isset($providerList[$llmProvider]['streamUsage'])
+        ? (bool)$providerList[$llmProvider]['streamUsage']
+        : in_array($agProvKey, $agUsageDefault, true));
+if ($agWantUsage && !empty($body['stream'])) {
+  $body['stream_options'] = ['include_usage' => true];
+  if ($agProvKey === 'openrouter') { $body['usage'] = ['include' => true]; }
+}
 debug_log('PROXY_LLM', 'IS STREAM MODE', ['stream' => $body['stream'], 'url' => $llmUrl]);
 // Désactiver le thinking via options Ollama (Qwen3, DeepSeek-R1)
 // Plus fiable que le préfixe texte /no_think
@@ -271,6 +283,7 @@ if($llmProvider != 'ollama'){
         die("stream failed");
     }
     $startTime = microtime(true);
+    $agUsage = null; // AGENIA-COST : compteurs renvoyes par le fournisseur
     while (($line = fgets($streamHandle)) !== false) {
         
         
@@ -296,6 +309,11 @@ if($llmProvider != 'ollama'){
           }
 
          $content = $json['choices'][0]['delta']['content'] ?? '';
+         // AGENIA-COST : le dernier bloc porte "usage" (Groq : "x_groq.usage")
+         if (is_array($json)) {
+           $u = $json['usage'] ?? ($json['x_groq']['usage'] ?? null);
+           if (is_array($u) && isset($u['prompt_tokens'])) { $agUsage = $u; }
+         }
 
        // debug_log('PROXY_LLM', 'RESPONSE CONTENT', ['body' => var_dump($body), 'content' => $content,'FULL $line' => $line]);
          
@@ -318,7 +336,14 @@ if($llmProvider != 'ollama'){
 
     
 
-    $end = '{"model":"'.$model.'","created_at":"'.gmdate("c",(int)$endTime).'","message":{"role":"assistant","content":""},"done":true}';
+    // AGENIA-COST : ligne de fin au format Ollama, avec les tokens reels quand le fournisseur les donne
+    $agEnd = ['model' => $model, 'created_at' => gmdate('c', (int)$endTime), 'message' => ['role' => 'assistant', 'content' => ''], 'done' => true];
+    if ($agUsage) {
+      $agEnd['prompt_eval_count'] = (int)$agUsage['prompt_tokens'];
+      $agEnd['eval_count']        = (int)($agUsage['completion_tokens'] ?? 0);
+      if (isset($agUsage['cost']) && is_numeric($agUsage['cost'])) { $agEnd['agenia_cost'] = (float)$agUsage['cost']; }
+    }
+    $end = json_encode($agEnd, JSON_UNESCAPED_UNICODE);
     // AGENIA-OBS plus de contenu journalise : writeLog("proxy-llm.php===END==>294 :".   $end);
     $len = strlen($end);
 

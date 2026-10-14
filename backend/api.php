@@ -405,7 +405,7 @@ function handleLlmStream(array $body): void // AGENIA-LEAK v1 AGENIA-DEMO
     $cookieParts = [];
     foreach ($_COOKIE as $k => $v) { $cookieParts[] = urlencode($k) . '=' . urlencode($v); }
 
-    // Marqueur interne de l'agent : JAMAIS renvoyÃ© au navigateur (propriÃ©tÃ© intellectuelle).
+    // Marqueur interne de l'agent : JAMAIS renvoyé au navigateur (propriété intellectuelle).
     $TRIGGER      = '@terminal';
     $agentPattern = '/@terminal\s+action=(.+?)\s+objectif=(.+?)\s+mode=admin/is';
 
@@ -425,7 +425,7 @@ function handleLlmStream(array $body): void // AGENIA-LEAK v1 AGENIA-DEMO
     $streamHandle = @fopen('http://localhost/proxy-llm.php', 'r', false, $ctx);
     if ($streamHandle === false) {
         if ($hasAudit) { audit_write('llm_call', ['status' => 'unreachable', 'duration_ms' => (int)round((microtime(true) - $t0) * 1000)]); }
-        echo json_encode(['error' => true, 'message' => 'âš  Le service LLM est inaccessible.'], JSON_UNESCAPED_UNICODE) . "\n";
+        echo json_encode(['error' => true, 'message' => '⚠ Le service LLM est inaccessible.'], JSON_UNESCAPED_UNICODE) . "\n";
         flush();
         exit;
     }
@@ -437,13 +437,13 @@ function handleLlmStream(array $body): void // AGENIA-LEAK v1 AGENIA-DEMO
         }
     }
 
-    $lineBuf    = '';     // tampon des lignes NDJSON reÃ§ues de proxy-llm
-    $assistant  = '';     // texte assistant cumulÃ© (jamais renvoyÃ© tel quel)
-    $emitted    = 0;      // caractÃ¨res de $assistant dÃ©jÃ  envoyÃ©s au navigateur
-    $held       = false;  // true dÃ¨s qu'un dÃ©but de marqueur apparaÃ®t : on retient tout
+    $lineBuf    = '';     // tampon des lignes NDJSON reçues de proxy-llm
+    $assistant  = '';     // texte assistant cumulé (jamais renvoyé tel quel)
+    $emitted    = 0;      // caractères de $assistant déjà envoyés au navigateur
+    $held       = false;  // true dès qu'un début de marqueur apparaît : on retient tout
     $agentFired = false;
 
-    // Envoie le texte SÃ›R au navigateur, en gardant une queue qui pourrait devenir
+    // Envoie le texte SÛR au navigateur, en gardant une queue qui pourrait devenir
     // le marqueur. Rien contenant le marqueur ne sort jamais.
     $flushSafe = function (bool $final) use (&$assistant, &$emitted, &$held, $TRIGGER) {
         if ($held) { return; }
@@ -488,15 +488,15 @@ function handleLlmStream(array $body): void // AGENIA-LEAK v1 AGENIA-DEMO
                 $done = [
                     'model'      => $decoded['model'] ?? null,
                     'tokens_in'  => $decoded['prompt_eval_count'] ?? null,
-                    'tokens_out' => $decoded['eval_count'] ?? null,
+                    'tokens_out' => $decoded['eval_count'] ?? null, 'cost' => $decoded['agenia_cost'] ?? null, // AGENIA-COST
                 ];
             }
 
-            // DÃ¨s que le dÃ©but du marqueur apparaÃ®t, on cesse d'Ã©mettre.
+            // Dès que le début du marqueur apparaît, on cesse d'émettre.
             if (!$agentFired && !$held && strpos($assistant, $TRIGGER) !== false) {
                 $held = true;
             }
-            // Invocation complÃ¨te : on la traite cÃ´tÃ© serveur, jamais cÃ´tÃ© client.
+            // Invocation complète : on la traite côté serveur, jamais côté client.
             if (!$agentFired && $held && preg_match($agentPattern, $assistant, $mm)) {
                 $agentFired = true;
                 $action   = trim(preg_replace('/\s+/', ' ', $mm[1]));
@@ -505,14 +505,14 @@ function handleLlmStream(array $body): void // AGENIA-LEAK v1 AGENIA-DEMO
                 echo json_encode(['clear' => true], JSON_UNESCAPED_UNICODE) . "\n";
 
                 $hasCap = roleHasCapacity('terminal', $authRole);
-                // DÃ©mo : on MONTRE la carte d'accord (l'exÃ©cution sera simulÃ©e). InvitÃ© : on refuse.
+                // Démo : on MONTRE la carte d'accord (l'exécution sera simulée). Invité : on refuse.
                 $canSeeCard = $isDemo || ($hasCap && !$isGuest);
                 if ($hasAudit) { audit_write('agent_proposed', ['command' => $action, 'goal' => $objectif, 'allowed' => $canSeeCard, 'demo' => $isDemo]); }
 
                 if (!$canSeeCard) {
                     $lang = defined('UI_LANG') ? UI_LANG : 'fr';
                     $msg  = $lang === 'fr'
-                        ? 'Pour utiliser le mode Agent, veuillez vous connecter avec un compte autorisÃ©.'
+                        ? 'Pour utiliser le mode Agent, veuillez vous connecter avec un compte autorisé.'
                         : 'To use Agent mode, please sign in with an authorized account.';
                     echo json_encode(['message' => ['content' => $msg]], JSON_UNESCAPED_UNICODE) . "\n";
                     echo json_encode(['done' => true], JSON_UNESCAPED_UNICODE) . "\n";
@@ -548,6 +548,7 @@ function handleLlmStream(array $body): void // AGENIA-LEAK v1 AGENIA-DEMO
             elseif ($k === 'model' && empty($audit['model'])) { $audit['model'] = $v; }
         }
     }
+    foreach ([__DIR__, dirname(__DIR__)] as $agd) { if (is_file($agd . '/lib/llm-cost.php')) { require_once $agd . '/lib/llm-cost.php'; break; } } if (function_exists('agenia_llm_cost')) { $audit += agenia_llm_cost($audit, $done['cost'] ?? null); } // AGENIA-COST
     if ($hasAudit) { audit_write('llm_call', $audit); }
 
     unset($audit['model'], $audit['provider']); // le front n'affiche aucun nom de techno

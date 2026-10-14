@@ -1,0 +1,7 @@
+{
+  "_aide": "Prix en dollars US par million de tokens, recopies depuis la page tarifs du fournisseur. Cle : \"fournisseur/modele\" exactement comme dans les reglages (ex. \"openai/gpt-4o-mini\"). Mettre a jour \"updated\" a chaque changement. OpenRouter et les modeles locaux n'ont pas besoin de grille.",
+  "currency": "USD",
+  "budget_monthly": 50,
+  "updated": "",
+  "models": {}
+}

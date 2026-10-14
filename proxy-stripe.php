@@ -55,7 +55,7 @@ if ( $event_type == "checkout.session.completed"){
     $url    = 'http://172.17.164.70:' . $port . '/stripe/webhook';
     $url    = 'http://localhost:' . $port . '/stripe/webhook';
 
-    debug_log('WEBHOOK', 'FROM STRIPE', ['secret' => $secret,'session' => $result['sessionId'] ?? '', 'url' => $result['url']]);
+    debug_log('WEBHOOK', 'FROM STRIPE', ['secret' => ($secret !== '' ? 'present' : 'missing'),'session' => $result['sessionId'] ?? '', 'url' => $result['url']]);
 
     $ctx = stream_context_create(['http' => [
         'method'        => 'POST',
