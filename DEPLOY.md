@@ -62,8 +62,7 @@ Le build est copié dans `app/` à la racine du site.
 ## 3b. IIS (Windows)
 
 1. Créer le site IIS pointant sur le dossier, avec PHP via FastCGI et une liaison HTTPS.
-2. Appliquer les protections (console administrateur), après avoir renseigné `$site` :
-   `deploy/iis/securite-iis.ps1`. Les adresses sensibles doivent répondre **404**.
+2. Vérifier que le `web.config` fourni est actif (règles `hiddenSegments`) : les adresses sensibles doivent répondre **404**.
 3. Droits : couper l'héritage sur `config`, `data`, `logs`, `business` et n'accorder que
    SYSTEM, Administrateurs et `IIS AppPool\<pool>` (lecture sur `config`, modification sur
    `data` et `logs`).

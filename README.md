@@ -95,7 +95,7 @@ Le site doit être servi en HTTPS, avec les dossiers internes **invisibles depui
 
 | Serveur | Fichiers fournis |
 |---|---|
-| IIS | `web.config` (règles de protection) et `deploy/iis/` |
+| IIS | `web.config` (règles de protection) |
 | Apache | `.htaccess` et `deploy/apache/agenia.conf` |
 
 Les instructions détaillées sont dans **[DEPLOY.md](DEPLOY.md)**.

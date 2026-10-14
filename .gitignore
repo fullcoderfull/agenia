@@ -77,3 +77,11 @@ Desktop.ini
 
 # --- Configuration locale (prompt systeme, adresses internes) ---
 config/settings.json
+
+# Outils d'installation premium (non publies)
+CARTOGRAPHIE*.md
+agenia-lot*.ps1
+deploy/iis/
+icacls-setup.bat
+icals-iis.bat
+setup.bat
