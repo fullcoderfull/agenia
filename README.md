@@ -3,9 +3,9 @@
 **Un assistant IA pour les équipes, sous contrôle** : l'agent prépare, une personne décide.
 Chaque échange est tracé et son coût est connu. Le modèle d'IA peut tourner en local ou dans le cloud.
 
-> **Installation en 5 étapes, environ 15 minutes.**
-> Deux éléments sont **obligatoires** : le script **`setup.sh`** (étape 2) et le **serveur MCP terminal** (étape 3).
-> Sans eux, l'application ne fonctionne pas.
+> **Installation en 6 étapes, environ 20 minutes.**
+> Trois éléments sont **obligatoires** : la **base de données** (étape 2), le script **`setup.sh`** (étape 3)
+> et le **serveur MCP terminal** (étape 4). Sans eux, l'application ne fonctionne pas.
 
 ---
 
@@ -15,11 +15,11 @@ Chaque échange est tracé et son coût est connu. Le modèle d'IA peut tourner 
 |---|---|---|
 | Serveur web | IIS 10 (Windows) ou Apache 2.4 (Linux) | sert le site |
 | PHP | 8.0 minimum, 8.2 recommandé, avec `pdo_mysql`, `mbstring`, `openssl`, `curl` | API de l'application |
-| MySQL ou MariaDB | 8.0 / 10.6 ou plus | comptes et abonnements |
+| MySQL | **8.0 ou plus** (MariaDB 10.6+ possible) | comptes, sessions, abonnements, modèles d'IA |
 | Node.js | 20 LTS, **sur le poste de compilation uniquement** | construction de l'interface |
 | Bash | Linux, macOS, ou **Git Bash** / WSL sous Windows | lancement de `setup.sh` |
 | HTTPS | certificat valide | obligatoire : les cookies de session sont sécurisés |
-| Serveur MCP terminal | voir l'étape 3 | exécution des actions de l'agent |
+| Serveur MCP terminal | voir l'étape 4 | exécution des actions de l'agent |
 
 Vérifier PHP :
 
@@ -41,25 +41,72 @@ cd agenia
 
 Placez le dossier là où votre serveur web le servira, ou clonez directement à cet endroit.
 
-### 2. Lancer `setup.sh` (obligatoire)
+### 2. Créer la base de données (obligatoire, MySQL 8)
+
+Deux fichiers SQL sont fournis, **à importer dans cet ordre** :
+
+| Ordre | Fichier | Contenu |
+|---|---|---|
+| 1 | `lib/schema.sql` | la structure : tables des comptes, sessions, abonnements, usage |
+| 2 | `config/models.sql` | les modèles d'IA de référence |
+
+**a. Créer la base et un compte applicatif à droits limités** (jamais `root` pour l'application).
+Choisissez un mot de passe fort à la place de `MOT_DE_PASSE_FORT` :
+
+```bash
+mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS agenia CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;"
+mysql -u root -p -e "CREATE USER IF NOT EXISTS 'agenia_app'@'localhost' IDENTIFIED BY 'MOT_DE_PASSE_FORT'; GRANT SELECT, INSERT, UPDATE, DELETE ON agenia.* TO 'agenia_app'@'localhost';"
+```
+
+Avec MariaDB, remplacez `utf8mb4_0900_ai_ci` par `utf8mb4_unicode_ci`.
+
+**b. Importer les deux fichiers**, depuis le dossier du projet :
+
+```bash
+mysql -u root -p agenia -e "source lib/schema.sql"
+mysql -u root -p agenia -e "source config/models.sql"
+```
+
+Ces commandes fonctionnent à l'identique sous Linux et dans PowerShell sous Windows. Si
+`mysql` est introuvable sous Windows, utilisez son chemin complet, par exemple
+`& "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"`.
+
+**c. Vérifier** avec le compte applicatif : la liste des tables doit s'afficher.
+
+```bash
+mysql -u agenia_app -p agenia -e "SHOW TABLES;"
+```
+
+Le nom de la base (`agenia`), le compte (`agenia_app`) et son mot de passe seront à reporter
+dans `config/secrets.php` à l'étape suivante.
+
+### 3. Lancer `setup.sh` (obligatoire)
 
 ```bash
 bash setup.sh
 ```
 
-`setup.sh` prépare l'application par **copie sécurisée** : il crée les fichiers de
-configuration à partir des modèles fournis, sans jamais écraser un fichier existant, et
-restreint leurs droits d'accès. **L'application ne démarre pas sans cette étape** : les
-fichiers qu'il crée ne sont pas dans le dépôt, volontairement.
+`setup.sh` prépare l'application par **copie sécurisée** : il génère `config/secrets.php`
+(clé maître et signature uniques). **L'application ne démarre pas sans cette étape** : ce
+fichier n'est pas dans le dépôt, volontairement.
+
+> **À lancer une seule fois.** Relancé sur une installation existante, il remplace les
+> secrets : l'ancien fichier est sauvegardé dans `config/secrets.php.bak`, à supprimer
+> après vérification.
 
 > Sous Windows, lancez la commande depuis **Git Bash** (installé avec Git for Windows) ou WSL,
 > dans le dossier du projet.
 
-Complétez ensuite les valeurs demandées dans `config/secrets.php` : base de données, clés,
-secret de session. **Ne réutilisez jamais les valeurs d'exemple**, et ne versionnez jamais
-ce fichier.
+Complétez ensuite `config/secrets.php` avec les informations de la base créée à l'étape 2.
+**Ne réutilisez jamais les valeurs d'exemple**, et ne versionnez jamais ce fichier.
 
-### 3. Installer le serveur MCP terminal (obligatoire)
+Si `config/settings.json` n'existe pas, créez-le à partir du modèle fourni :
+
+```bash
+cp -n config/settings.example.json config/settings.json
+```
+
+### 4. Installer le serveur MCP terminal (obligatoire)
 
 L'agent d'Agenia exécute ses actions, toujours après accord humain, par l'intermédiaire
 d'une **API MCP** : le **serveur MCP terminal**. Il doit tourner sur la même machine que le
@@ -71,7 +118,7 @@ site.
 - Sans lui, le chat fonctionne, mais les actions de l'agent échouent.
 - Installez-le **avant** de tester le mode agent.
 
-### 4. Construire l'interface
+### 5. Construire l'interface
 
 ```bash
 cd react
@@ -88,7 +135,7 @@ cd react ; npm ci ; $env:AGENIA_WEB_ROOT = '..' ; npm run deploy ; cd ..
 
 L'interface compilée est copiée dans `app/`.
 
-### 5. Configurer le serveur web
+### 6. Configurer le serveur web
 
 Le site doit être servi en HTTPS, avec les dossiers internes **invisibles depuis Internet** :
 `config`, `data`, `logs`, `lib`, `react`, `docs`, `deploy`.
@@ -117,7 +164,7 @@ Ouvrez ces adresses (remplacez `votre-domaine`) :
 | `https://votre-domaine/logs/` | **404** |
 
 Un **404** sur les deux dernières adresses est le bon résultat. Si le fichier s'affiche,
-le site expose sa configuration : corrigez l'étape 5 avant toute mise en service.
+le site expose sa configuration : corrigez l'étape 6 avant toute mise en service.
 
 ---
 
@@ -125,10 +172,12 @@ le site expose sa configuration : corrigez l'étape 5 avant toute mise en servic
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
-| Erreur 500 sur toutes les pages PHP | `setup.sh` n'a pas été lancé : `config/secrets.php` est absent | lancer `bash setup.sh` (étape 2) |
+| Erreur 500 sur toutes les pages PHP | `setup.sh` n'a pas été lancé : `config/secrets.php` est absent | lancer `bash setup.sh` (étape 3) |
+| « SQLSTATE » ou « Access denied » | base absente, ou identifiants faux dans `secrets.php` | refaire l'étape 2, vérifier `secrets.php` |
+| « Table … doesn't exist » | `lib/schema.sql` non importé | étape 2 b |
 | « Failed opening required … secrets.php » | idem | idem |
-| Les actions de l'agent échouent | serveur MCP terminal arrêté ou absent | démarrer le serveur MCP terminal (étape 3) |
-| Page blanche sur `/app/fr/` | interface non construite | étape 4 |
+| Les actions de l'agent échouent | serveur MCP terminal arrêté ou absent | démarrer le serveur MCP terminal (étape 4) |
+| Page blanche sur `/app/fr/` | interface non construite | étape 5 |
 | Erreur 500.19 (IIS) | le compte du site ne peut pas lire le dossier | donner la lecture au pool d'applications |
 | Avertissement de sécurité dans le navigateur | certificat HTTPS invalide ou expiré | installer un certificat valide |
 
@@ -136,6 +185,7 @@ le site expose sa configuration : corrigez l'étape 5 avant toute mise en servic
 
 ## Sécurité
 
+- **Base de données** : l'application utilise un compte limité (`SELECT`, `INSERT`, `UPDATE`, `DELETE`), jamais `root`.
 - **Aucun secret dans le dépôt.** Clés et mots de passe vivent uniquement dans `config/secrets.php`,
   créé par `setup.sh` et ignoré par Git.
 - **Le serveur MCP terminal reste local.** Il ne doit jamais être joignable depuis Internet.

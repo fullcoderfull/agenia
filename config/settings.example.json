@@ -1,0 +1,207 @@
+{
+    "plans":  {
+                  "pro":  [
+                              "pro",
+                              "pro_monthly",
+                              "pro_yearly",
+                              "fulltop"
+                          ]
+              },
+    "guest":  {
+                  "maxConnections":  5,
+                  "blockMinutes":  1
+              },
+    "user":  {
+                 "maxConnections":  1,
+                 "blockMinutes":  1
+             },
+    "audio":  {
+                  "enabled":  true,
+                  "streaming":  true,
+                  "firstChunkWords":  120,
+                  "sentenceMarkers":  [
+                                          ".",
+                                          "!",
+                                          "?",
+                                          "…"
+                                      ],
+                  "pauseMarkers":  [
+                                       ",",
+                                       ";",
+                                       ":"
+                                   ],
+                  "pauseMinWords":  150,
+                  "ttsTimeoutMs":  8000,
+                  "naturalConversation":  false
+              },
+    "vision":  {
+                   "mode":  "off",
+                   "threshold":  15,
+                   "prompt":  "",
+                   "speak":  true
+               },
+    "probe":  {
+                  "maxAttempts":  10,
+                  "delayMs":  3000
+              },
+    "tts":  {
+                "url":  "http://localhost:8880",
+                "voice":  "ff_siwis(0.9)+im_nicola(0.1)+af_nicole(0.1)",
+                "format":  "mp3",
+                "model":  "tts",
+                "minWordsStrong":  50,
+                "instruct":  false,
+                "instructPrompt":  "",
+                "replayAudio":  false,
+                "ttsMinWordsStrong":  50
+            },
+    "ui":  {
+               "lang":  "fr"
+           },
+    "llm":  {
+                "url":  "http://localhost:11434",
+                "model":  "AssistantQ14bI:latest",
+                "visionModel":  "llava",
+                "systemPrompt5":  "",
+                "systemPrompt2":  "",
+                "systemPrompt1":  "",
+                "systemPrompt4":  "",
+                "systemPrompt":  "",
+                "apiKey":  "",
+                "noThink":  false,
+                "memoire":  32000
+            },
+    "stt":  {
+                "url":  "http://localhost:8990",
+                "model":  "Systran/faster-whisper-small",
+                "lang":  "fr"
+            },
+    "upload":  {
+                   "enabled":  true,
+                   "maxTokens":  10000,
+                   "maxPages":  5,
+                   "maxSizeMb":  20,
+                   "acceptedTypes":  [
+                                         "image/*",
+                                         "application/pdf",
+                                         "text/plain",
+                                         "text/markdown",
+                                         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                     ]
+               },
+    "ttsHighlight":  {
+                         "enabled":  true,
+                         "color":  "rgba(124,58,237,0.6)",
+                         "colorLight":  "rgba(109,40,217,0.4)",
+                         "wordsPerSecond":  3.5
+                     },
+    "partner":  {
+                    "enabled":  false
+                },
+    "MCP":  {
+                "baseUrl":  "http://localhost:5000/api/",
+                "terminal":  "Terminal/execute?"
+            },
+    "providers":  {
+                      "llm":  {
+                                  "active":  "ollama",
+                                  "list":  {
+                                               "ollama":  {
+                                                              "label":  "Ollama (local)",
+                                                              "url":  "http://localhost:11434",
+                                                              "requiresKey":  false
+                                                          },
+                                               "openai":  {
+                                                              "label":  "OpenAI",
+                                                              "url":  "https://api.openai.com",
+                                                              "requiresKey":  true
+                                                          },
+                                               "anthropic":  {
+                                                                 "label":  "Anthropic",
+                                                                 "url":  "https://api.anthropic.com",
+                                                                 "requiresKey":  true
+                                                             },
+                                               "mistral":  {
+                                                               "label":  "Mistral",
+                                                               "url":  "https://api.mistral.ai",
+                                                               "requiresKey":  true
+                                                           },
+                                               "groq":  {
+                                                            "label":  "Groq",
+                                                            "url":  "https://api.groq.com/openai",
+                                                            "requiresKey":  true
+                                                        },
+                                               "gemini":  {
+                                                              "label":  "Gemini",
+                                                              "url":  "https://generativelanguage.googleapis.com/v1beta/openai",
+                                                              "requiresKey":  true
+                                                          },
+                                               "openrouter":  {
+                                                                  "label":  "OpenRouter",
+                                                                  "url":  "https://openrouter.ai/api",
+                                                                  "requiresKey":  true
+                                                              },
+                                               "deepseek":  {
+                                                                "label":  "DeepSeek",
+                                                                "url":  "https://api.deepseek.com",
+                                                                "requiresKey":  true
+                                                            },
+                                               "qwen":  {
+                                                            "label":  "Qwen",
+                                                            "url":  "https://dashscope-intl.aliyuncs.com/compatible-mode",
+                                                            "requiresKey":  true
+                                                        }
+                                           }
+                              },
+                      "tts":  {
+                                  "active":  "kokoro",
+                                  "list":  {
+                                               "kokoro":  {
+                                                              "label":  "Kokoro (local)",
+                                                              "url":  "http://localhost:8880",
+                                                              "requiresKey":  false
+                                                          },
+                                               "openai":  {
+                                                              "label":  "OpenAI TTS",
+                                                              "url":  "https://api.openai.com",
+                                                              "requiresKey":  true
+                                                          },
+                                               "elevenlabs":  {
+                                                                  "label":  "ElevenLabs",
+                                                                  "url":  "https://api.elevenlabs.io",
+                                                                  "requiresKey":  true
+                                                              },
+                                               "azure":  {
+                                                             "label":  "Azure TTS",
+                                                             "url":  "",
+                                                             "requiresKey":  true
+                                                         }
+                                           }
+                              },
+                      "stt":  {
+                                  "active":  "whisper_local",
+                                  "list":  {
+                                               "whisper_local":  {
+                                                                     "label":  "Whisper (local)",
+                                                                     "url":  "http://localhost:8990",
+                                                                     "requiresKey":  false
+                                                                 },
+                                               "openai":  {
+                                                              "label":  "OpenAI Whisper",
+                                                              "url":  "https://api.openai.com/v1/audio/transcriptions",
+                                                              "requiresKey":  true
+                                                          },
+                                               "groq":  {
+                                                            "label":  "Groq Whisper",
+                                                            "url":  "https://api.groq.com/openai/v1/audio/transcriptions",
+                                                            "requiresKey":  true
+                                                        },
+                                               "azure":  {
+                                                             "label":  "Azure STT",
+                                                             "url":  "",
+                                                             "requiresKey":  true
+                                                         }
+                                           }
+                              }
+                  }
+}
