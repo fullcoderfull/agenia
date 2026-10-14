@@ -35,30 +35,28 @@ Desktop.ini
 
 business/
 
-# Videos (trop lourdes pour Git)
-*.mp4
+*.bak*
+*-old.*
 
-# Fonctionnalites PRO et documentation interne (hors depot)
+# Documentation interne, sauvegardes, tests et diagnostics
+CARTOGRAPHIE*.md
+*.ancien-*
+*.acl-*.txt
+agenia-*.ps1
+test.php
+debug-test.php
+mock-*.php
+whoami.php
+icacls-*.bat
+icals-*.bat
+monfichier.txt
+version*.txt
+*.mp4
 superadmin-journal.php
 superadmin-front.php
 api/superadmin/
 docs/
-
-# Videos
-*.mp4
-
-# Copies de sauvegarde
-*.bak
-*.bak_*
-*_bak*
-*-bak*
 *bck*
-*.old
-*_old.*
-*.orig
-*.save*
-*~
-*backup*
-* - Copie*
-* - Copy*
-*.avant-*
+github.md
+config/secrets*.php
+proxy-stripe-debug.php
