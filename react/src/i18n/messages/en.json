@@ -20,7 +20,8 @@
     "ctaPrimary": "Try it for 20 minutes",
     "ctaSecondary": "Watch the demo",
     "reassure": "No sign-up, no credit card · full access · 10 messages.",
-    "ctaDemo": "Guided demo"
+    "ctaDemo": "Guided demo",
+    "github": "Source code on GitHub"
   },
   "trail": {
     "title": "Audit trail",

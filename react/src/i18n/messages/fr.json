@@ -20,7 +20,8 @@
     "ctaPrimary": "Essayer 20 minutes",
     "ctaSecondary": "Voir la démo",
     "reassure": "Sans inscription ni carte bancaire · accès complet · 10 messages.",
-    "ctaDemo": "Démonstration guidée"
+    "ctaDemo": "Démonstration guidée",
+    "github": "Code source sur GitHub"
   },
   "trail": {
     "title": "Piste d'audit",

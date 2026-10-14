@@ -21,7 +21,10 @@ export function phpHref(page: PhpPage, locale: Locale): string {
 
 // Fichiers statiques servis par le site PHP (même domaine). Liste fermée.
 const PHP_ASSETS = {
-  demoVideo: '/assets/video/demo.mp4',
+  demoVideoFr: '/assets/video/agenia-teaser-fr.mp4',
+  demoVideoEn: '/assets/video/agenia-teaser-en.mp4',
+  demoPosterFr: '/assets/video/agenia-teaser-fr.jpg',
+  demoPosterEn: '/assets/video/agenia-teaser-en.jpg',
 } as const;
 
 export function phpAsset(asset: keyof typeof PHP_ASSETS): string {

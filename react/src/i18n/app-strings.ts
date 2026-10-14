@@ -57,6 +57,10 @@ export interface EnvStrings {
   codeCopy: string;
   codeCopied: string;
   attachAdd: string;
+  camTake: string;
+  camBack: string;
+  camFront: string;
+  webcam: { title: string; shoot: string; switchCam: string; cancel: string; denied: string; notFound: string; failed: string };
   attachRemove: string;
   attachAlt: string;
   attachType: string;
@@ -208,6 +212,18 @@ const fr: EnvStrings = {
   codeCopy: 'Copier le code',
   codeCopied: 'Copié',
   attachAdd: 'Joindre un fichier (image, Word, texte)',
+  camTake: 'Prendre une photo',
+  camBack: 'Caméra arrière',
+  camFront: 'Caméra avant',
+  webcam: {
+    title: 'Prendre une photo',
+    shoot: 'Prendre la photo',
+    switchCam: 'Changer de caméra',
+    cancel: 'Annuler',
+    denied: "Accès à la caméra refusé. Autorisez-la dans la barre d'adresse du navigateur, puis réessayez.",
+    notFound: 'Aucune caméra détectée sur cet appareil.',
+    failed: "Impossible d'utiliser la caméra sur ce navigateur.",
+  },
   attachRemove: 'Retirer',
   attachAlt: 'Image jointe',
   attachType: "Ce type de fichier n'est pas accepté.",
@@ -359,6 +375,18 @@ const en: EnvStrings = {
   codeCopy: 'Copy code',
   codeCopied: 'Copied',
   attachAdd: 'Attach a file (image, Word, text)',
+  camTake: 'Take a photo',
+  camBack: 'Back camera',
+  camFront: 'Front camera',
+  webcam: {
+    title: 'Take a photo',
+    shoot: 'Take photo',
+    switchCam: 'Switch camera',
+    cancel: 'Cancel',
+    denied: "Camera access denied. Allow it from the browser's address bar, then try again.",
+    notFound: 'No camera detected on this device.',
+    failed: 'The camera cannot be used in this browser.',
+  },
   attachRemove: 'Remove',
   attachAlt: 'Attached image',
   attachType: 'This file type is not accepted.',

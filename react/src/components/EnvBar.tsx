@@ -156,7 +156,7 @@ export function EnvBar({
         {locale === 'fr' ? 'EN' : 'FR'}
       </Link>
       <ThemeToggle toLight={t.themeToLight} toDark={t.themeToDark} />
-      <a className="env-logout" href={`${PHP}/logout.php`} aria-label={t.logout} title={t.logout}>
+      <a className="env-logout" href={`${PHP}/logout.php?lang=${locale}`} aria-label={t.logout} title={t.logout}>
         <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
           <polyline points="16 17 21 12 16 7" />
